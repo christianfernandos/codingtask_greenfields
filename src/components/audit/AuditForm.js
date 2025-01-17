@@ -1,94 +1,57 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import Select from 'react-dropdown';
+import 'react-dropdown/style.css';
 import { useNavigate } from 'react-router-dom';
 
 function AuditForm() {
-  const [formData, setFormData] = useState({
-    title: '',
-    area: '',
-    auditDate: '',
-    closeDate: '',
-  });
+  const [title, setTitle] = useState('');
+  const [area, setArea] = useState('');
+  const [dateAudit, setDateAudit] = useState(null);
+  const [dateClose, setDateClose] = useState(null);
+  const [user, setUser] = useState('');
+  const [day, setDay] = useState('');
+  const [year, setYear] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
-      const response = await fetch('/api/audits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+      const userToken = localStorage.getItem('userToken');
+      await axios.post('http://your-api-url/audit', {
+        title,
+        area,
+        dateAudit,
+        dateClose,
+        user,
+        day,
+        year,
+      }, {
+        headers: { Authorization: `Bearer ${userToken}` },
       });
-      
-      if (response.ok) {
-        navigate('/audit/list');
-      }
+      alert('Audit submitted successfully');
+      navigate('/audit-results');
     } catch (error) {
-      console.error('Error creating audit:', error);
+      alert('Submission Failed: Error submitting audit');
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   return (
-    <div className="max-w-2xl mx-auto p-8">
-      <h2 className="text-2xl font-bold mb-6">Create New Audit</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block mb-2">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-2">Area</label>
-          <input
-            type="text"
-            name="area"
-            value={formData.area}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-2">Audit Date</label>
-          <input
-            type="date"
-            name="auditDate"
-            value={formData.auditDate}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-2">Close Date</label>
-          <input
-            type="date"
-            name="closeDate"
-            value={formData.closeDate}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
-          Submit Audit
-        </button>
-      </form>
+    <div>
+      <h1>Audit Form</h1>
+      <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <Select 
+        options={[{label: 'Area 1', value: 'area1'}, {label: 'Area 2', value: 'area2'}]} 
+        onChange={(option) => setArea(option.value)} 
+        placeholder="Select Area" 
+      />
+      <DatePicker selected={dateAudit} onChange={(date) => setDateAudit(date)} placeholderText="Select Audit Date" />
+      <DatePicker selected={dateClose} onChange={(date) => setDateClose(date)} placeholderText="Select Close Date" />
+      <input placeholder="User Auditor" value={user} onChange={(e) => setUser(e.target.value)} />
+      <input placeholder="Day" value={day} onChange={(e) => setDay(e.target.value)} />
+      <input placeholder="Year" value={year} onChange={(e) => setYear(e.target.value)} />
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 }

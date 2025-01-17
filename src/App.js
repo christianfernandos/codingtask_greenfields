@@ -1,41 +1,24 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import ResetPassword from './components/auth/ResetPassword';
-import Dashboard from './components/Dashboard';
-import AuditForm from './components/audit/AuditForm';
-import AuditList from './components/audit/AuditList';
-import { AuthProvider } from './contexts/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './components/audit/Login'; // Adjust the path based on your structure
+import Register from './components/auth/Register'; // Adjust the path based on your structure
+import MainMenu from './components/MainMenu'; // Adjust the path based on your structure
+import AuditForm from './components/audit/AuditForm'; // Adjust the path based on your structure
+import AuditResults from './components/audit/AuditResults'; // Adjust the path based on your structure
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <div>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/dashboard" element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/audit/new" element={
-            <PrivateRoute>
-              <AuditForm />
-            </PrivateRoute>
-          } />
-          <Route path="/audit/list" element={
-            <PrivateRoute>
-              <AuditList />
-            </PrivateRoute>
-          } />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/main-menu" element={<MainMenu />} />
+          <Route path="/audit-form" element={<AuditForm />} />
+          <Route path="/audit-results" element={<AuditResults />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </div>
+    </Router>
   );
 }
 
